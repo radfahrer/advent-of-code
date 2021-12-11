@@ -30,7 +30,7 @@ def partTwo(records)
 		end
 		answers = answers.filter { |array| !array.empty?}
 
-		intersectArrays(*answers).size
+		intersectArrays(*answers).uniq.size
 	end
 	counts.reduce(0) { |sum, count| sum + count }
 end
