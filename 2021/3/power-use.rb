@@ -2,7 +2,7 @@ require '../file_reader.rb'
 
 input = getInput()
 
-counts = input.reduce([0,0,0,0,0,0,0,0,0,0,0,0]) do |counts, line|
+counts = input.reduce(Array.new(12, 0)) do |counts, line|
 	line.split('').each_with_index { |bit, index| counts[index] += bit.to_i}
 	counts
 end
