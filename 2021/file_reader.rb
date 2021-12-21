@@ -1,4 +1,4 @@
-def getInput(options)
+def getInput(options = {})
     input_file = ARGV[0]
     input = File.read(input_file)
     if(options[:raw]) 
