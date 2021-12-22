@@ -14,51 +14,53 @@ class Vector
         return coord_string.split(",").map { |value| value.to_i }
     end
 
-    def is_verticle?
-        return @y1 == @y2
+    def is_vertical?
+        return @x1 == @x2
     end
     
     def is_horizontal?
-        return @x1 == @x2
+        return @y1 == @y2
+    end
+
+    def is_diagonal? 
+        return (@x2 - @x1).abs == (@y2 - @y1).abs
     end
 
     def is_valid? 
-        return is_verticle? || is_horizontal?
-    end
-
-    def max_x
-        return @x1 > @x2 ? @x1 : @x2
-    end 
-
-    def max_y
-        return @y1 > @y2 ? @y1 : @y2
+        return is_horizontal? || is_vertical? || is_diagonal?
     end
 
     def to_s
         return "#{x1},#{y1} -> #{x2},#{y2}"
     end
 
-    def low_x 
+    def min_x 
         return [@x1, @x2].min
     end
     
-    def high_x
+    def max_x
         return [@x1, @x2].max
     end
 
-    def low_y 
+    def min_y 
         return [@y1, @y2].min
     end
     
-    def high_y
+    def max_y
         return [@y1, @y2].max
     end
 
     def get_points
-        if(is_horizontal?) 
-            return (low_y..high_y).map { |y| [@x1, y]}
+        if(is_horizontal?)
+            return (min_x..max_x).map { |x| [x, @y1]}
+        elsif (is_vertical?)
+            return (min_y..max_y).map { |y| [@x1, y]}
         else 
-            return (low_x..high_x).map { |x| [x, @y1]}
+            x_vals = (min_x..max_x).to_a
+            x_vals = x_vals.reverse if(@x1 != min_x)
+            y_vals = (min_y..max_y).to_a
+            y_vals = y_vals.reverse if(@y1 != min_y)
+            return x_vals.map.with_index {|x, index| [x, y_vals[index]]}
         end
     end
 end
@@ -73,8 +75,8 @@ class VentFinder
     end
 
     def build_map
-        valid_vectors = @vectors.reduce([]) do |filtered_vectors, vector| 
-            filtered_vectors.push(vector) if(vector.is_valid?) 
+        valid_vectors = @vectors.reduce([]) do |filtered_vectors, current_vector|
+            filtered_vectors.push(current_vector) if(current_vector.is_valid?)
             filtered_vectors
         end
         puts "valid vector count: #{valid_vectors.size}"
@@ -82,13 +84,13 @@ class VentFinder
            points = vector.get_points
            points.each do |point|
                 x, y = point
-                @map[x][y] += 1
+                @map[y][x] += 1
            end
         end
     end
 
-    def map_string
-        @map.map { |row| row.join }.join("\n")
+    def print_map
+        @map.each { |row| puts row.map{|col| col == 0 ? '.' : col}.join }
     end
 
     def danger_count
@@ -107,6 +109,8 @@ class VentFinder
 
     def solve
         build_map
+        puts "final map"
+        print_map
         puts "danger count #{danger_count}"
     end
 end
