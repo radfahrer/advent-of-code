@@ -39,15 +39,28 @@ class Stacks
     def move(from_index, to_index)
         from_stack = @stacks[from_index]
         to_stack = @stacks[to_index]
-        puts "from #{from_index} to #{to_index}"
-        puts "from stack #{from_stack}"
-        puts "to stack #{to_stack}"
-        from_stack_index = from_stack.index{|box| /\w/.match(box)}
-        to_stack_index = to_stack.index{|box| /\w/.match(box)} + 1
+        from_stack_index = from_stack.index{|box| /\w/.match(box)} || 0
+        to_stack_index = to_stack.index{|box| /\w/.match(box)} || to_stack.size
         crate = from_stack[from_stack_index]
-        puts "crate #{crate}"
-        from_stack.delete_at(from_index)
-        to_stack.insert(to_index, crate)
+        from_stack.delete_at(from_stack_index)
+        to_stack.insert(to_stack_index, crate)
+        # reset stacks
+        self.cleanup()
+    end
+
+    def cleanup
+        max_stack_size = @stacks.map { |stack| stack.count {|box| box =~ /\w/} }.max()
+        @stacks = @stacks.map do |stack| 
+            if(stack.size > max_stack_size)
+                stack.last(max_stack_size)
+            elsif(stack.size < max_stack_size)
+                diff = max_stack_size - stack.size
+                diff.times { stack.unshift(" ")}
+                stack
+            else 
+                stack
+            end
+        end
     end
 
     def parse_level(level)
@@ -62,17 +75,16 @@ end
 
 def parse_move(move) 
     match, *groups = move.match(/move (\d+) from (\d+) to (\d+)/).to_a
-    return groups.map {|group| group.to_i}
+    return groups.map { |group| group.to_i }
 end
 
 stacks = Stacks.new(crates)
 
 puts "======= start ======="
-moves.split("\n").first(2).each do |move| 
+moves.split("\n").each do |move| 
     count, from_column, to_column = parse_move(move)
     count.times do 
-        puts "stacks: \n#{stacks.to_s}"
-        stacks.move(from_column -1 , to_column - 1)
-        puts "stacks: \n#{stacks.to_s}" 
+        stacks.move(from_column -1 , to_column -1)
     end        
 end
+puts "stacks: \n#{stacks.to_s}" 
