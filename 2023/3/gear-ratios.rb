@@ -28,6 +28,18 @@ def is_part_number?(x, y)
     return neighbors.any? {|value| value && value != "." && !(/\d/ =~ value) }
 end
 
+def accumulate(accumulator, part_numbers, other_numbers, is_part)
+    if(accumulator.length > 0) 
+        number = accumulator.join().to_i
+        if(is_part) 
+            part_numbers.push(number)
+        else 
+            other_numbers.push(number)
+        end
+        accumulator = []
+    end
+end
+
 def solve(schematic)
     part_numbers = []
     other_numbers = []
@@ -42,17 +54,15 @@ def solve(schematic)
             if(symbol =~ /\d/)
                 number_accumulator.push(symbol)
                 is_part ||= is_part_number?(x_index, y_index)
-            else
-                if(number_accumulator.length > 0) 
-                    number = number_accumulator.join().to_i
-                    if(is_part) 
-                        part_numbers.push(number)
-                    else 
-                        other_numbers.push(number)
-                    end
+                # handle last number in row
+                if(x_index == row.size - 1) 
+                    accumulate(number_accumulator, part_numbers, other_numbers, is_part)
                     number_accumulator = []
                     is_part = false
                 end
+            else
+                accumulate(number_accumulator, part_numbers, other_numbers, is_part)
+                number_accumulator = []
                 is_part = false
             end
         end
