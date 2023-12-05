@@ -3,6 +3,8 @@ require '../../file_reader.rb'
 lines = getInput()
 
 NUMBER_WORDS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+NUMBER_WORD_MATCH = /(one|two|three|four|five|six|seven|eight|nine)/
+LAST_NUMBER_WORD_MATCH = /(eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)/
 NUMBER_WORD_MAP = {
     "one" => 1,
     "two" => 2,
@@ -15,26 +17,19 @@ NUMBER_WORD_MAP = {
     "nine" => 9
 }
 
-puts "lines: #{lines}"
-
 def convertNumberWords(input)
-    NUMBER_WORDS.reduce(input) do |output, word| 
-        number = NUMBER_WORD_MAP[word]
-        output.gsub word, number.to_s
-    end
+    first_replaced = input.sub(NUMBER_WORD_MATCH) {|word| NUMBER_WORD_MAP[word]}
+    last_replaced = (first_replaced.reverse.sub(LAST_NUMBER_WORD_MATCH) {|word| NUMBER_WORD_MAP[word.reverse]}).reverse
+    return last_replaced
 end
 
 convertedLines = lines.map {|line| convertNumberWords(line)}
-
-puts "converted lines: #{convertedLines}"
 
 values = convertedLines.map do |line| 
     characters = line.chars
     digits = characters.select { |character| character =~ /[0-9]/ }
     "#{digits.first}#{digits.last}".to_i
 end
-
-puts "values: #{values}"
 
 sum = values.reduce {|sum, val| sum + val}
 
