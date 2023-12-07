@@ -5,10 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Local Ruby File",
-            "type": "Ruby",
+            "type": "rdbg",
+            "name": "Debug current file",
             "request": "launch",
-            "program": "ruby ${file} sample.txt"
+            "script": "-Itest ${file}",
+            "askParameters": true
         }
     ]
 }

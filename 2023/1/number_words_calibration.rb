@@ -1,8 +1,9 @@
 require '../../file_reader.rb'
 
-lines = getInput()
+lines = getInput({file_name: 'sample2.txt'})
 
 NUMBER_WORDS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+NUMBER_WORDS_PATTERN = /(one|two|three|four|five|six|seven|eight|nine)/
 NUMBER_WORD_MAP = {
     "one" => 1,
     "two" => 2,
@@ -18,10 +19,11 @@ NUMBER_WORD_MAP = {
 puts "lines: #{lines}"
 
 def convertNumberWords(input)
-    NUMBER_WORDS.reduce(input) do |output, word| 
-        number = NUMBER_WORD_MAP[word]
-        output.gsub word, number.to_s
-    end
+    output = input
+    while(NUMBER_WORDS_PATTERN =~ output) do 
+    output = output.sub(NUMBER_WORDS_PATTERN) {|match| NUMBER_WORD_MAP[match]}
+    end 
+    return output
 end
 
 convertedLines = lines.map {|line| convertNumberWords(line)}
