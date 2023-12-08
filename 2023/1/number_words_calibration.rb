@@ -1,6 +1,6 @@
 require '../../file_reader.rb'
 
-lines = getInput()
+lines = getInput({file_name: 'sample2.txt'})
 
 NUMBER_WORDS = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
 NUMBER_WORD_MATCH = /(one|two|three|four|five|six|seven|eight|nine)/
