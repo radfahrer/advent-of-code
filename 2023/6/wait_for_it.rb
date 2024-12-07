@@ -38,5 +38,21 @@ class BoatRaces
 end
 
 boatRaces = BoatRaces.new(times_string, distances_string)
-
 boatRaces.solve()
+
+class LongRace
+    def initialize(times_string, distances_string)
+        time_label, times = times_string.split(":")
+        distance_label, distances = distances_string.split(":")
+        long_time = times.gsub(/\s+/, "").to_i
+        long_distance = distances.gsub(/\s+/, "").to_i
+        @race = Race.new(long_time, long_distance)
+    end
+    def solve
+        @race.solve()
+    end
+end
+
+long_race = LongRace.new(times_string, distances_string);
+
+puts "second solution: #{long_race.solve}"
